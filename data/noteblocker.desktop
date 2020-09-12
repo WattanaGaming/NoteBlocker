@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name= NoteBlocker
+GenericName=NoteBlocker
+Comment=Easily edit your .NBS files
+Categories=Utility;
+Exec=com.github.wattanagaming.noteblocker
+Icon=application-default-icon
+Terminal=false
+Type=Application
+Keywords=Noteblock;
