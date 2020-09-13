@@ -6,7 +6,7 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
     }
 
     construct {
-        title = "NoteBlocker";
+        title = "NoteBlocker(Prototype build)";
         window_position = Gtk.WindowPosition.CENTER;
         set_default_size(800, 450);
 
@@ -21,15 +21,30 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
         loadLabel.use_markup = true;
         loadLabel.label = ("<big>Please choose an .NBS file to load.</big>");
 
-        var loadButton = new Gtk.FileChooserButton(null, Gtk.FileChooserAction.OPEN);
+        var fileChooser = new Gtk.FileChooserButton("Select file", Gtk.FileChooserAction.OPEN);
 
         var fileInfo = new Gtk.Label (null);
         fileInfo.xalign = 0;
         fileInfo.yalign = 0;
         fileInfo.label = "File not loaded";
 
+        fileChooser.file_set.connect(() => {
+            File file = fileChooser.get_file();
+            uint8[] fileContent;
+            string etag;
+            file.load_contents(null, out fileContent, out etag);
+
+            NBTool.NBSHeader header = new NBTool.NBSHeader();
+
+            foreach (uint8 byte in fileContent) {
+                print ("%x", byte);
+            }
+            print("\n\n");
+        });
+
+
         grid.add (loadLabel);
-        grid.add(loadButton);
+        grid.add(fileChooser);
         grid.add(fileInfo);
 
         this.add(grid);
