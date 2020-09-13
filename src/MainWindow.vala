@@ -6,7 +6,7 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
     }
 
     construct {
-        title = "NoteBlocker(Dummy version)";
+        title = "NoteBlocker";
         window_position = Gtk.WindowPosition.CENTER;
         set_default_size(800, 450);
 
@@ -14,14 +14,23 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
         grid.orientation = Gtk.Orientation.VERTICAL;
         grid.row_spacing = 6;
 
-        var label = new Gtk.Label (null);
-        label.wrap = true;
-        label.xalign = 0.5f;
-        label.yalign = 0.5f;
-        label.use_markup = true;
-        label.label = ("<big>You done goof'd!</big>\n\nYou are seeing this message because you have compiled this app from the master branch, which contains a dummy version of the app. If you want to help develop or test the app, please compile from the development branch.");
+        var loadLabel = new Gtk.Label (null);
+        loadLabel.wrap = true;
+        loadLabel.xalign = 0.5f;
+        loadLabel.yalign = 0.5f;
+        loadLabel.use_markup = true;
+        loadLabel.label = ("<big>Please choose an .NBS file to load.</big>");
 
-        grid.add (label);
+        var loadButton = new Gtk.FileChooserButton(null, Gtk.FileChooserAction.OPEN);
+
+        var fileInfo = new Gtk.Label (null);
+        fileInfo.xalign = 0;
+        fileInfo.yalign = 0;
+        fileInfo.label = "File not loaded";
+
+        grid.add (loadLabel);
+        grid.add(loadButton);
+        grid.add(fileInfo);
 
         this.add(grid);
     }
