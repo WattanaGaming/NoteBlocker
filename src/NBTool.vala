@@ -1,27 +1,33 @@
 public class NBTool {
-    public struct NBSHeader {
-        bool oldVersion;
-        int8 version;
-        int8 vanillaInstrCount;
+    public struct SongData {
+        // Header
+        short old_version;
+        uint8 version;
+        uint8 vanilla_intrument_count;
         short length;
         short layer_count;
         string song_name;
-        char[] other;
+        string song_author;
     }
 
-    public static NBSHeader ToHeader(DataInputStream data_stream) {
-        data_stream.set_byte_order (DataStreamByteOrder.LITTLE_ENDIAN); // As specified in https://opennbs.org/nbs
+    public static SongData to_song_data (DataInputStream data_stream) {
+        // Specifications for the NBS file format can be found at https://opennbs.org/nbs
+        debug("Converting DataInputStream to Song Data");
+        data_stream.set_byte_order (DataStreamByteOrder.LITTLE_ENDIAN);
+        var song_data = new SongData();
 
-        var header = new NBSHeader();
+        // Note to self: a "short" is 2 bytes(16 bits) long.
+        // TODO: Add error handler.
+        song_data.old_version = data_stream.read_int16 ();
+        song_data.version = data_stream.read_byte ();
+        song_data.vanilla_intrument_count = data_stream.read_byte ();
+        song_data.length = data_stream.read_int16 ();
+        song_data.layer_count = data_stream.read_int16 ();
+        data_stream.skip (4); // 4 bytes(32 bits) must be skipped before reading any string from an NBS file.
+        song_data.song_name = data_stream.read_line ();
+        data_stream.skip (3); // Dunno why 4 bytes skip doesn't work here.
+        song_data.song_author = data_stream.read_line ();
 
-        stdout.printf("Old Version: %x\n", data_stream.read_int16());
-        stdout.printf("NBS Version: %x\n", data_stream.read_byte());
-        stdout.printf("Vanilla Instrument Count: %x\n", data_stream.read_byte());
-        stdout.printf("Length: %x\n", data_stream.read_int16());
-        stdout.printf("Layer Count: %x\n", data_stream.read_int16());
-        data_stream.skip(4); // A string in an .nbs file starts off with 32-bits of data(4 bytes) then the text.
-        stdout.printf("Song Name: %s\n", data_stream.read_line());
-
-        return header;
+        return song_data;
     }
 }

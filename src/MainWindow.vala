@@ -29,13 +29,16 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
         fileInfo.label = "File not loaded";
 
         fileChooser.file_set.connect(() => {
-            File file = fileChooser.get_file();
+            File file = fileChooser.get_file ();
 
             // Open file for reading
             var file_stream = file.read ();
             var data_stream = new DataInputStream (file_stream);
 
-            NBTool.NBSHeader header = NBTool.ToHeader(data_stream);
+            NBTool.SongData header = NBTool.to_song_data (data_stream);
+
+            print(header.song_name + "\n");
+            print(header.song_author + "\n");
         });
 
 
