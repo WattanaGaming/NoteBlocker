@@ -30,16 +30,12 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
 
         fileChooser.file_set.connect(() => {
             File file = fileChooser.get_file();
-            uint8[] fileContent;
-            string etag;
-            file.load_contents(null, out fileContent, out etag);
 
-            NBTool.NBSHeader header = new NBTool.NBSHeader();
+            // Open file for reading
+            var file_stream = file.read ();
+            var data_stream = new DataInputStream (file_stream);
 
-            foreach (uint8 byte in fileContent) {
-                print ("%x", byte);
-            }
-            print("\n\n");
+            NBTool.NBSHeader header = NBTool.ToHeader(data_stream);
         });
 
 
