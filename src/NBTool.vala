@@ -8,6 +8,9 @@ public class NBTool {
         short layer_count;
         string song_name;
         string song_author;
+        string song_original_author;
+        string song_description;
+        short song_tempo;
     }
 
     public static SongData to_song_data (DataInputStream data_stream) {
@@ -23,11 +26,27 @@ public class NBTool {
         song_data.vanilla_intrument_count = data_stream.read_byte ();
         song_data.length = data_stream.read_int16 ();
         song_data.layer_count = data_stream.read_int16 ();
-        data_stream.skip (4); // 4 bytes(32 bits) must be skipped before reading any string from an NBS file.
-        song_data.song_name = data_stream.read_line ();
-        data_stream.skip (3); // Dunno why 4 bytes skip doesn't work here.
-        song_data.song_author = data_stream.read_line ();
+
+        song_data.song_name = get_string (data_stream, "Song Name");
+        song_data.song_author = get_string (data_stream, "Song Author");
+        song_data.song_original_author = get_string (data_stream, "Song Original Author");
+        song_data.song_description = get_string (data_stream, "Song Description");
+
+        song_data.song_tempo = data_stream.read_int16 ();
 
         return song_data;
+    }
+
+    private static string get_string(DataInputStream data_stream, string name = "(unnamed)") {
+        uint8[] buffer = new uint8[data_stream.read_uint32 ()];
+        // If a string in the DataInputStream is empty, it will cause an error.
+        // This is a way to better inform other developers about what went wrong.
+        try {
+            data_stream.read (buffer);
+        } finally {
+            message(@"Failed reading the string from DataInputStream. Is the \"$name\" string empty?");
+        }
+
+        return (string) buffer + "\0";
     }
 }

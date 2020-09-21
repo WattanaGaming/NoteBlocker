@@ -14,22 +14,22 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
         grid.orientation = Gtk.Orientation.VERTICAL;
         grid.row_spacing = 6;
 
-        var loadLabel = new Gtk.Label (null);
-        loadLabel.wrap = true;
-        loadLabel.xalign = 0.5f;
-        loadLabel.yalign = 0.5f;
-        loadLabel.use_markup = true;
-        loadLabel.label = ("<big>Please choose an .NBS file to load.</big>");
+        var load_label = new Gtk.Label (null);
+        load_label.wrap = true;
+        load_label.xalign = 0.5f;
+        load_label.yalign = 0.5f;
+        load_label.use_markup = true;
+        load_label.label = ("<big>Please choose an .NBS file to load.</big>");
 
-        var fileChooser = new Gtk.FileChooserButton("Select file", Gtk.FileChooserAction.OPEN);
+        var file_chooser = new Gtk.FileChooserButton("Select file", Gtk.FileChooserAction.OPEN);
 
-        var fileInfo = new Gtk.Label (null);
-        fileInfo.xalign = 0;
-        fileInfo.yalign = 0;
-        fileInfo.label = "File not loaded";
+        var file_info_text = new Gtk.Label (null);
+        file_info_text.xalign = 0;
+        file_info_text.yalign = 0;
+        file_info_text.label = "File not loaded";
 
-        fileChooser.file_set.connect(() => {
-            File file = fileChooser.get_file ();
+        file_chooser.file_set.connect(() => {
+            File file = file_chooser.get_file ();
 
             // Open file for reading
             var file_stream = file.read ();
@@ -37,14 +37,18 @@ public class NoteBlocker.MainWindow : Gtk.ApplicationWindow {
 
             NBTool.SongData header = NBTool.to_song_data (data_stream);
 
-            print(header.song_name + "\n");
-            print(header.song_author + "\n");
+            file_info_text.label = "";
+            file_info_text.label += "Song Name: " + header.song_name + "\n";
+            file_info_text.label += "Song Author: " + header.song_author + "\n";
+            file_info_text.label += "Song Original Author: " + header.song_original_author + "\n";
+            file_info_text.label += "Song Description: " + header.song_description + "\n";
+            // file_info_text.label += string.printf ("Song Tempo: ", header.song_tempo);
         });
 
 
-        grid.add (loadLabel);
-        grid.add(fileChooser);
-        grid.add(fileInfo);
+        grid.add (load_label);
+        grid.add(file_chooser);
+        grid.add(file_info_text);
 
         this.add(grid);
     }
