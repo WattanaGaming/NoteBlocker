@@ -11,6 +11,19 @@ public class NBTool {
         string song_original_author;
         string song_description;
         short song_tempo;
+        // These are stored, but not used.
+        // uint8 auto_save;
+        // uint8 auto_save_duration;
+        uint8 time_signature;
+        int minutes_spent;
+        int left_clicks;
+        int right_clicks;
+        int note_blocks_added;
+        int note_blocks_removed;
+        string midi_schematic_file_name;
+        uint8 is_looping;
+        uint8 max_loop_count;
+        short loop_start_tick;
     }
 
     public static SongData to_song_data (DataInputStream data_stream) {
@@ -33,6 +46,8 @@ public class NBTool {
         song_data.song_description = get_string (data_stream, "Song Description");
 
         song_data.song_tempo = data_stream.read_int16 ();
+        data_stream.skip (2); // These two bytes are stored but not used.
+
 
         return song_data;
     }
@@ -40,7 +55,7 @@ public class NBTool {
     private static string get_string(DataInputStream data_stream, string name = "(unnamed)") {
         uint8[] buffer = new uint8[data_stream.read_uint32 ()];
         // If a string in the DataInputStream is empty, it will cause an error.
-        // This is a way to better inform other developers about what went wrong.
+        // This is a way to better inform the developer about what went wrong.
         try {
             data_stream.read (buffer);
         } finally {
