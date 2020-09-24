@@ -21,7 +21,7 @@ public class NBTool {
         int note_blocks_added;
         int note_blocks_removed;
         string midi_schematic_file_name;
-        uint8 is_looping;
+        uint8 loop;
         uint8 max_loop_count;
         short loop_start_tick;
     }
@@ -47,6 +47,16 @@ public class NBTool {
 
         song_data.song_tempo = data_stream.read_int16 ();
         data_stream.skip (2); // These two bytes are stored but not used.
+        song_data.time_signature = data_stream.read_byte ();
+        song_data.minutes_spent = data_stream.read_int32 ();
+        song_data.left_clicks = data_stream.read_int32 ();
+        song_data.right_clicks = data_stream.read_int32 ();
+        song_data.note_blocks_added = data_stream.read_int32 ();
+        song_data.note_blocks_removed = data_stream.read_int32 ();
+        song_data.midi_schematic_file_name = get_string (data_stream, "MIDI/Schematic File Name");
+        song_data.loop = data_stream.read_byte ();
+        song_data.max_loop_count = data_stream.read_byte ();
+        song_data.loop_start_tick = data_stream.read_int16 ();
 
 
         return song_data;
@@ -59,7 +69,7 @@ public class NBTool {
         try {
             data_stream.read (buffer);
         } finally {
-            message(@"Failed reading the string from DataInputStream. Is the \"$name\" string empty?");
+            message(@"Failed reading string from DataInputStream. Is the \"$name\" string empty?");
         }
 
         return (string) buffer + "\0";
